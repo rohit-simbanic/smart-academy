@@ -1,5 +1,5 @@
-import React, { useRef } from 'react'
-import { useScroll, MotionValue } from 'framer-motion'
+import React, { useRef, useState, useEffect } from 'react'
+import { useScroll, MotionValue, motion } from 'framer-motion'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -89,49 +89,51 @@ const Laptop3D: React.FC<{ scrollYProgress: MotionValue<number> }> = ({ scrollYP
           transform
           distanceFactor={1.48}
           position={[0, 1.1, 0.035]}
-          className="w-[800px] h-[500px] bg-slate-950 rounded-sm overflow-hidden select-text flex flex-col items-center justify-center text-center p-8 space-y-6 pointer-events-auto"
+          className="w-[800px] h-[500px] bg-slate-950 rounded-sm overflow-hidden select-text pointer-events-auto"
           style={{
             backfaceVisibility: 'hidden',
           }}
         >
-          {/* Classroom Background Inside Screen */}
-          <div className="absolute inset-0 z-0">
-            <img
-              src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=1600"
-              alt="Classroom"
-              className="w-full h-full object-cover"
-              decoding="async"
-            />
-            <div className="absolute inset-0 bg-slate-950/60 backdrop-brightness-95" />
-          </div>
+          <div className="w-full h-full relative overflow-hidden select-text flex flex-col items-center justify-center text-center p-8 space-y-6">
+            {/* Background inside laptop screen */}
+            <div className="absolute inset-0 z-0">
+              <img
+                src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=1600"
+                alt="Classroom"
+                className="w-full h-full object-cover"
+                decoding="async"
+              />
+              <div className="absolute inset-0 bg-slate-950/60 backdrop-brightness-95" />
+            </div>
 
-          {/* Texts & Buttons inside screen */}
-          <div className="relative z-10 flex flex-col items-center justify-center space-y-6">
-            <span className="inline-block px-3 py-1 text-xs font-bold text-brand-pink bg-brand-pink/10 rounded-full border border-brand-pink/20 uppercase tracking-widest animate-pulse">
-              Welcome to Smart Academy
-            </span>
-            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight font-sans tracking-tight max-w-2xl">
-              Achieve your future
-              <span className="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-blue">
-                With Smart Academy
+            {/* Content inside laptop screen */}
+            <div className="relative z-10 flex flex-col items-center justify-center space-y-6">
+              <span className="inline-block px-3 py-1 text-xs font-bold text-brand-pink bg-brand-pink/10 rounded-full border border-brand-pink/20 uppercase tracking-widest animate-pulse font-sans">
+                Welcome to Smart Academy
               </span>
-            </h1>
-            <p className="text-sm md:text-base text-slate-200 font-body leading-relaxed max-w-xl">
-              Smart Academy is a place where children can learn, play, and grow in a safe and
-              supportive environment. Join us to unlock your child's potential!
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <Button variant="pink" size="lg" onClick={openRegisterModal}>
-                Register Now
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-white text-white hover:bg-white hover:text-brand-dark"
-                onClick={handleLearnMore}
-              >
-                Learn More
-              </Button>
+              <h1 className="text-4xl md:text-5xl font-black text-white leading-tight font-sans tracking-tight max-w-2xl">
+                Achieve your future
+                <span className="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-blue">
+                  With Smart Academy
+                </span>
+              </h1>
+              <p className="text-sm md:text-base text-slate-200 font-body leading-relaxed max-w-xl">
+                Smart Academy is a place where children can learn, play, and grow in a safe and
+                supportive environment. Join us to unlock your child's potential!
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <Button variant="pink" size="lg" onClick={openRegisterModal}>
+                  Register Now
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-white text-white hover:bg-white hover:text-brand-dark"
+                  onClick={handleLearnMore}
+                >
+                  Learn More
+                </Button>
+              </div>
             </div>
           </div>
         </Html>
@@ -142,6 +144,24 @@ const Laptop3D: React.FC<{ scrollYProgress: MotionValue<number> }> = ({ scrollYP
 
 export const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { openRegisterModal } = useAppStore()
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const handleLearnMore = () => {
+    const nextSection = document.querySelector('#about')
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   // Track scroll progress
   const { scrollYProgress } = useScroll({
@@ -149,6 +169,84 @@ export const Hero: React.FC = () => {
     offset: ['start start', 'end end'],
   })
 
+  // Mobile-specific static 2D Hero (fully responsive and optimized)
+  if (isMobile) {
+    return (
+      <section
+        id="home"
+        className="relative min-h-[550px] sm:min-h-[650px] flex items-center overflow-hidden py-20 bg-slate-900 text-white"
+      >
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=1600"
+            alt="Classroom"
+            className="w-full h-full object-cover"
+            decoding="async"
+          />
+          <div className="absolute inset-0 bg-slate-950/65 backdrop-brightness-75" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+          <div className="max-w-3xl space-y-6 text-center mx-auto">
+            {/* Animated Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="space-y-2"
+            >
+              <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight font-sans">
+                Achieve your future
+                <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-blue">
+                  With Smart Academy
+                </span>
+              </h1>
+            </motion.div>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+              className="text-slate-200 text-base sm:text-lg font-body leading-relaxed max-w-xl mx-auto"
+            >
+              Smart Academy is a place where children can learn, play, and grow in a safe and
+              supportive environment. Join us to unlock your child's potential!
+            </motion.p>
+
+            {/* Action Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+              className="flex flex-col sm:flex-row gap-4 justify-center max-w-xs sm:max-w-none mx-auto"
+            >
+              <Button
+                variant="pink"
+                size="lg"
+                onClick={openRegisterModal}
+                className="w-full sm:w-auto"
+              >
+                Register Now
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-white text-white hover:bg-white hover:text-brand-dark w-full sm:w-auto"
+                onClick={handleLearnMore}
+              >
+                Learn More
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Desktop 3D Laptop Hero
   return (
     <div ref={containerRef} className="relative h-[200vh] bg-white select-none">
       {/* Sticky container to lock viewport */}
