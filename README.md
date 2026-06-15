@@ -87,7 +87,7 @@ This repository is integrated with a continuous deployment (CD) pipeline targeti
 
 ### Workflow Configuration
 
-When you push commits to the `main` branch, the workflow [.github/workflows/deploy.yml](file:///c:/Users/rohit/Downloads/dating_site/.github/workflows/deploy.yml) triggers:
+When you push commits to the `main` branch, the workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml) triggers:
 
 1.  Loads Node.js environment on Ubuntu container.
 2.  Clones and installs dependencies.
